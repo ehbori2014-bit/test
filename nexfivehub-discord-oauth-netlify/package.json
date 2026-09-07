@@ -1,0 +1,14 @@
+{
+  "name": "nexfivehub-discord-oauth-netlify",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "devDependencies": {
+    "netlify-cli": "27.5.0"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}
