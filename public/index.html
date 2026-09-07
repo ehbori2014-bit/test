@@ -1,0 +1,1425 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NexFive Hub Prototype Store v5</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#171923; --muted:#6b7280;
+      --line:#e5e7eb; --brand:#2563eb; --brand2:#1d4ed8; --danger:#dc2626;
+      --ok:#16a34a; --warn:#d97706; --shadow:0 12px 36px rgba(15,23,42,.08); --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
+    a{text-decoration:none;color:inherit}
+    button,input,textarea,select{font:inherit}
+    .wrap{width:min(1120px,calc(100% - 32px));margin:auto}
+    header{
+      position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);
+      backdrop-filter:blur(12px);border-bottom:1px solid var(--line)
+    }
+    .head{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{font-size:20px;font-weight:800}
+    .nav{display:flex;gap:10px}
+    .btn{
+      border:0;background:var(--brand);color:#fff;padding:11px 16px;border-radius:11px;
+      cursor:pointer;font-weight:700
+    }
+    .btn:hover{background:var(--brand2)}
+    .btn.secondary{background:#eef2ff;color:#1e40af}
+    .btn.danger{background:#fee2e2;color:#991b1b}
+    .btn.ghost{background:#fff;color:var(--text);border:1px solid var(--line)}
+    .btn.success{background:#16a34a}
+    .btn.warn{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+    .hero{padding:72px 0 42px;background:linear-gradient(180deg,#fff,var(--bg))}
+    .hero h1{font-size:clamp(38px,7vw,68px);margin:0 0 10px;letter-spacing:-2px}
+    .hero p{margin:0;color:var(--muted);font-size:18px}
+    .section{padding:36px 0 70px}
+    .sectionTop{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:22px}
+    .sectionTop h2{margin:0;font-size:30px}
+    .sectionTop p{margin:4px 0 0;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+    .thumb{height:170px;background:linear-gradient(135deg,#dbeafe,#eef2ff);display:grid;place-items:center;font-weight:900;color:#1e3a8a;letter-spacing:.08em}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    .cardBody{padding:18px}
+    .cardBody h3{margin:0 0 8px;font-size:21px}
+    .desc{color:var(--muted);min-height:46px}
+    .price{font-size:24px;font-weight:800;margin:14px 0}
+    .meta{font-size:13px;color:var(--muted)}
+    .empty{padding:40px;border:1px dashed var(--line);border-radius:var(--radius);text-align:center;color:var(--muted);background:#fff}
+
+    #adminView{display:none}
+    .adminShell{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 68px)}
+    .sidebar{background:#111827;color:#fff;padding:24px 18px}
+    .sidebar h3{margin-top:0}
+    .sidebtn{width:100%;text-align:left;padding:11px 12px;border:0;border-radius:10px;background:transparent;color:#d1d5db;cursor:pointer;margin-bottom:6px}
+    .sidebtn.active,.sidebtn:hover{background:#1f2937;color:#fff}
+    .adminMain{padding:30px}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+    .formGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    label{display:grid;gap:7px;font-weight:700;font-size:14px}
+    label.full{grid-column:1/-1}
+    input,textarea,select{
+      width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;outline:none
+    }
+    textarea{min-height:110px;resize:vertical}
+    input:focus,textarea:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{font-size:13px;color:var(--muted)}
+    .status{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
+    .status.on{background:#dcfce7;color:#166534}
+    .status.off{background:#f3f4f6;color:#6b7280}
+    .status.warn{background:#ffedd5;color:#9a3412}
+    .loginBox{width:min(420px,calc(100% - 32px));margin:80px auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
+    .loginBox h2{margin-top:0}
+    .notice{padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;color:#9a3412;font-size:13px;margin-bottom:18px}
+    .info{padding:12px 14px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;color:#1e40af;font-size:13px;margin-bottom:18px}
+    .successBox{padding:12px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;color:#166534;font-size:13px;margin-top:12px}
+    .errorBox{padding:12px 14px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;color:#991b1b;font-size:13px;margin-top:12px}
+    .switchRow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+    .switchRow:last-child{border-bottom:0}
+    .switch{
+      position:relative;width:50px;height:28px;background:#d1d5db;border-radius:999px;cursor:pointer;flex:none
+    }
+    .switch input{display:none}
+    .switch span{
+      position:absolute;width:22px;height:22px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2)
+    }
+    .switch input:checked + span{transform:translateX(22px)}
+    .switch:has(input:checked){background:var(--brand)}
+    .toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s}
+    .toast.show{opacity:1}
+    .logItem{padding:14px 0;border-bottom:1px solid var(--line)}
+    .logItem:last-child{border-bottom:0}
+    .logItem strong{display:block}
+    .logItem small{color:var(--muted)}
+    .webhookPreview{
+      margin-top:14px;padding:16px;border-radius:12px;background:#2b2d31;color:#f2f3f5
+    }
+    .webhookPreview .embed{
+      border-left:4px solid #5865f2;background:#1e1f22;padding:12px 14px;border-radius:4px
+    }
+    .webhookPreview .embed h4{margin:0 0 8px}
+    .webhookPreview .embed p{margin:4px 0;color:#dbdee1;font-size:13px}
+
+    @media(max-width:820px){
+      .adminShell{grid-template-columns:1fr}
+      .sidebar{display:flex;gap:8px;overflow:auto}
+      .sidebar h3{display:none}
+      .sidebtn{width:auto;white-space:nowrap}
+      .formGrid{grid-template-columns:1fr}
+      label.full{grid-column:auto}
+      table{display:block;overflow:auto}
+    }
+
+    .accountBtn{display:inline-flex;align-items:center;gap:8px}
+    .accountAvatarImg{width:28px;height:28px;border-radius:50%;object-fit:cover}
+    .discordLoginBtn{background:#5865F2;color:#fff;border-color:#5865F2}
+    .discordLoginBtn:hover{background:#4752c4}
+    .avatar{
+      width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+      background:#dbeafe;color:#1e3a8a;font-weight:800;font-size:12px
+    }
+    .modalBack{
+      position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.55);
+      display:none;align-items:center;justify-content:center;padding:18px
+    }
+    .modal{
+      width:min(520px,100%);max-height:calc(100vh - 36px);overflow:auto;
+      background:#fff;border-radius:20px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.2)
+    }
+    .modal h2{margin:0 0 6px}
+    .modal p{color:var(--muted)}
+    .modalTop{display:flex;justify-content:space-between;align-items:center;gap:14px}
+    .closeBtn{border:0;background:#f3f4f6;width:36px;height:36px;border-radius:50%;cursor:pointer}
+    .tabs{display:flex;gap:8px;margin:18px 0}
+    .tabBtn{flex:1;border:1px solid var(--line);background:#fff;padding:10px;border-radius:10px;cursor:pointer;font-weight:700}
+    .tabBtn.active{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
+    .authPane{display:none}
+    .authPane.active{display:block}
+    .stack{display:grid;gap:12px}
+    .socialBtn{
+      width:100%;padding:12px 14px;border:1px solid var(--line);background:#fff;
+      border-radius:11px;cursor:pointer;font-weight:700;text-align:center
+    }
+    .socialBtn:hover{background:#f9fafb}
+    .divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:14px 0}
+    .divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}
+    .purchaseFields{display:grid;gap:12px;margin-top:18px}
+    .userBadge{padding:10px 12px;background:#f9fafb;border:1px solid var(--line);border-radius:10px;font-size:13px}
+
+
+    .mailButtonWrap{position:relative}
+    .mailBadge{position:absolute;right:-6px;top:-7px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#dc2626;color:#fff;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff}
+    .mailLayout{display:grid;grid-template-columns:280px 1fr;gap:16px;min-height:480px}
+    .mailList{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+    .mailItem{width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:#fff;padding:14px;cursor:pointer}
+    .mailItem:last-child{border-bottom:0}.mailItem:hover,.mailItem.active{background:#f8fafc}.mailItem.unread strong:after{content:" NEW";font-size:10px;color:#dc2626}
+    .mailItem strong{display:block;margin-bottom:4px}.mailItem small{color:var(--muted)}
+    .mailViewer{border:1px solid var(--line);border-radius:14px;background:#fff;padding:22px}.mailViewer h3{margin-top:0}.mailMeta{color:var(--muted);font-size:13px;margin-bottom:18px}
+    .receiptBox{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:12px;background:#f9fafb}.receiptRow{display:flex;justify-content:space-between;gap:16px;padding:6px 0}
+    .deliveryBox{margin-top:16px;padding:16px;border:1px solid #bfdbfe;border-radius:12px;background:#eff6ff}.deliveryBox code{word-break:break-all}
+    .mailEmpty{padding:42px;text-align:center;color:var(--muted)}.fileNote{font-size:12px;color:var(--muted);margin-top:6px}.hidden{display:none!important}
+    @media(max-width:820px){.mailLayout{grid-template-columns:1fr}.mailList{max-height:240px;overflow:auto}}
+
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap head">
+    <div class="brand">NexFive Hub</div>
+    <div class="nav">
+      <button class="btn ghost" onclick="showStore()">상점</button>
+      <button id="accountButton" class="btn ghost accountBtn" onclick="openAccountModal()">
+        <span class="avatar">?</span><span>로그인</span>
+      </button>
+      <div class="mailButtonWrap">
+        <button class="btn ghost" onclick="openMailbox()">메일함</button>
+        <span id="mailBadge" class="mailBadge">0</span>
+      </div>
+      <button class="btn" onclick="openAdmin()">관리자</button>
+    </div>
+  </div>
+</header>
+
+<section id="storeView">
+  <div class="hero">
+    <div class="wrap">
+      <h1>NexFive Hub</h1>
+      <p>Discord 실계정 로그인과 상점 기능을 연결한 NexFive Hub 개발 버전</p>
+    </div>
+  </div>
+
+  <div class="wrap section">
+    <div class="sectionTop">
+      <div>
+        <h2>판매 상품</h2>
+        <p>관리자 페이지에서 등록한 상품이 여기에 표시됩니다.</p>
+      </div>
+    </div>
+    <div id="productGrid" class="grid"></div>
+  </div>
+</section>
+
+<section id="adminView">
+  <div id="adminLogin">
+    <div class="loginBox">
+      <h2>관리자 로그인</h2>
+      <div class="notice">
+        프로토타입 전용입니다. 기본 비밀번호는 <b>1234</b>입니다.
+        실제 운영에서는 서버 인증으로 교체해야 합니다.
+      </div>
+      <label>
+        관리자 비밀번호
+        <input id="adminPassword" type="password" placeholder="비밀번호 입력" />
+      </label>
+      <div class="actions">
+        <button class="btn" onclick="adminLogin()">로그인</button>
+        <button class="btn ghost" onclick="showStore()">취소</button>
+      </div>
+      <p id="loginError" style="color:var(--danger);font-size:13px"></p>
+    </div>
+  </div>
+
+  <div id="adminPanel" style="display:none">
+    <div class="adminShell">
+      <aside class="sidebar">
+        <h3>관리자</h3>
+        <button class="sidebtn active" data-tab="products" onclick="switchAdminTab('products',this)">상품 관리</button>
+        <button class="sidebtn" data-tab="add" onclick="switchAdminTab('add',this)">상품 추가</button>
+        <button class="sidebtn" data-tab="orders" onclick="switchAdminTab('orders',this)">구매 로그</button>
+        <button class="sidebtn" data-tab="settings" onclick="switchAdminTab('settings',this)">설정</button>
+        <button class="sidebtn" onclick="logoutAdmin()">로그아웃</button>
+      </aside>
+
+      <main class="adminMain">
+        <section id="tab-products">
+          <div class="sectionTop">
+            <div>
+              <h2>상품 관리</h2>
+              <p>등록된 상품을 수정하거나 삭제할 수 있습니다.</p>
+            </div>
+            <button class="btn" onclick="openAddTab()">+ 상품 추가</button>
+          </div>
+          <div class="panel">
+            <div id="productTableWrap"></div>
+          </div>
+        </section>
+
+        <section id="tab-add" style="display:none">
+          <div class="sectionTop">
+            <div>
+              <h2 id="formTitle">상품 추가</h2>
+              <p>입력 후 저장하면 상점에 즉시 반영됩니다.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="formGrid">
+              <label>
+                상품명
+                <input id="name" placeholder="예: Basic 이용권" />
+              </label>
+
+              <label>
+                가격(원)
+                <input id="price" type="number" min="0" step="100" placeholder="9900" />
+              </label>
+
+              <label class="full">
+                설명
+                <textarea id="description" placeholder="상품 설명"></textarea>
+              </label>
+
+              <label>
+                상품 종류
+                <select id="type">
+                  <option value="디지털">디지털 상품</option>
+                  <option value="실물">실물 상품</option>
+                  <option value="서비스">서비스</option>
+                </select>
+              </label>
+
+              <label>
+                재고 방식
+                <select id="stockMode" onchange="toggleStockInput()">
+                  <option value="limited">수량 제한</option>
+                  <option value="unlimited">무제한</option>
+                </select>
+              </label>
+
+              <label id="stockCountLabel">
+                재고 수량
+                <input id="stock" type="number" min="0" value="999" />
+              </label>
+
+              <label>
+                판매 상태
+                <select id="active">
+                  <option value="true">판매중</option>
+                  <option value="false">판매중지</option>
+                </select>
+              </label>
+
+              <label>
+                이미지 URL
+                <input id="image" placeholder="https://... (선택)" />
+              </label>
+
+              <label class="full">
+                제공 방식 / 배송 안내
+                <input id="delivery" placeholder="예: 결제 완료 후 즉시 제공" />
+              </label>
+
+              <label>
+                구매 후 지급 방식
+                <select id="grantType" onchange="toggleGrantFields()">
+                  <option value="none">지급 없음</option>
+                  <option value="text">텍스트 / 라이선스 코드</option>
+                  <option value="link">다운로드 / 이용 링크</option>
+                  <option value="file">파일</option>
+                </select>
+              </label>
+
+              <label id="grantTextLabel" class="full hidden">
+                지급 텍스트 / 코드
+                <textarea id="grantText" placeholder="예: ABCD-EFGH-IJKL 또는 이용 안내 문구"></textarea>
+              </label>
+
+              <label id="grantLinkLabel" class="full hidden">
+                지급 링크
+                <input id="grantLink" placeholder="https://..." />
+              </label>
+
+              <label id="grantFileLabel" class="full hidden">
+                지급 파일
+                <input id="grantFile" type="file" />
+                <div class="fileNote">프로토타입은 2MB 이하 파일만 브라우저에 저장합니다. 실서비스에서는 서버/스토리지로 옮겨야 합니다.</div>
+                <div id="currentGrantFile" class="fileNote"></div>
+              </label>
+
+              <label class="full">
+                환불 안내
+                <input id="refund" placeholder="예: 제공 시작 전 취소 가능" />
+              </label>
+            </div>
+
+            <div class="actions">
+              <button class="btn" onclick="saveProduct()">저장</button>
+              <button class="btn ghost" onclick="resetForm()">초기화</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-orders" style="display:none">
+          <div class="sectionTop">
+            <div>
+              <h2>구매 로그</h2>
+              <p>프로토타입 구매 완료 기록입니다.</p>
+            </div>
+            <button class="btn danger" onclick="clearOrderLogs()">로그 초기화</button>
+          </div>
+          <div class="panel">
+            <div id="orderLogWrap"></div>
+          </div>
+        </section>
+
+        <section id="tab-settings" style="display:none">
+          <div class="sectionTop">
+            <div>
+              <h2>설정</h2>
+              <p>프로토타입 기능을 켜거나 끌 수 있습니다.</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="notice">
+              <b>중요:</b> 이 단일 HTML 프로토타입에서는 Discord Webhook URL이 브라우저 localStorage에 저장됩니다.
+              실제 운영에서는 절대로 이런 방식으로 저장하면 안 되고, Netlify 서버 함수나 별도 서버 환경변수로 옮겨야 합니다.
+            </div>
+
+            <div class="switchRow">
+              <div>
+                <strong>Discord 구매 알림</strong>
+                <div class="meta">구매 처리 완료 시 Discord Webhook 호출</div>
+              </div>
+              <label class="switch" aria-label="Discord 구매 알림">
+                <input id="discordEnabled" type="checkbox" />
+                <span></span>
+              </label>
+            </div>
+
+            <div style="margin-top:18px">
+              <label>
+                Discord Webhook URL
+                <input id="discordWebhookUrl" type="password" placeholder="https://discord.com/api/webhooks/..." />
+              </label>
+              <div class="actions">
+                <button class="btn" onclick="saveSettings()">설정 저장</button>
+                <button class="btn secondary" onclick="testWebhook()">테스트 전송</button>
+                <button class="btn ghost" onclick="toggleWebhookVisibility()">URL 보기/숨기기</button>
+              </div>
+              <div id="settingsResult"></div>
+            </div>
+
+            <div class="webhookPreview">
+              <div class="embed">
+                <h4>✅ 구매 처리 완료</h4>
+                <p><b>구매자</b> · 홍길동</p>
+                <p><b>Discord</b> · username</p>
+                <p><b>상품</b> · 디지털 서비스 이용권</p>
+                <p><b>금액</b> · 9,900원</p>
+                <p><b>주문번호</b> · PROTO-...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</section>
+
+
+<div id="accountModal" class="modalBack" onclick="backdropClose(event,'accountModal')">
+  <div class="modal">
+    <div class="modalTop">
+      <div>
+        <h2>계정</h2>
+        <p>회원가입 후 구매자 정보를 저장할 수 있습니다.</p>
+      </div>
+      <button class="closeBtn" onclick="closeModal('accountModal')">×</button>
+    </div>
+
+    <div id="loggedInPane" style="display:none">
+      <div id="currentUserBox" class="userBadge"></div>
+      <div class="actions">
+        <button class="btn" onclick="openProfileEdit()">프로필 수정</button>
+        <button class="btn ghost" onclick="logoutUser()">로그아웃</button>
+      </div>
+    </div>
+
+    <div id="loggedOutPane">
+      <div class="info">
+        Discord 계정으로 처음 로그인하면 NexFive Hub 계정이 자동으로 생성됩니다.
+        별도의 비밀번호는 저장하지 않습니다.
+      </div>
+      <div class="stack">
+        <button class="socialBtn discordLoginBtn" onclick="startDiscordLogin()">
+          Discord로 가입 / 로그인
+        </button>
+        <button class="socialBtn" disabled style="opacity:.55;cursor:not-allowed">
+          Google 로그인 · 준비 중
+        </button>
+      </div>
+      <div class="fileNote" style="margin-top:14px">
+        Discord 권한은 기본 프로필 확인용 <b>identify</b>만 요청합니다.
+      </div>
+      <div id="authResult"></div>
+    </div>
+  </div>
+</div>
+
+<div id="purchaseModal" class="modalBack" onclick="backdropClose(event,'purchaseModal')">
+  <div class="modal">
+    <div class="modalTop">
+      <div>
+        <h2>구매 정보</h2>
+        <p id="purchaseProductText"></p>
+      </div>
+      <button class="closeBtn" onclick="closeModal('purchaseModal')">×</button>
+    </div>
+
+    <div class="purchaseFields">
+      <label>
+        구매자 이름
+        <input id="purchaseBuyerName" placeholder="구매자 이름">
+      </label>
+      <label>
+        Discord 이름
+        <input id="purchaseDiscordName" placeholder="Discord 사용자명 또는 표시명">
+      </label>
+    </div>
+
+    <div id="purchaseAccountInfo" class="userBadge" style="margin-top:14px"></div>
+
+    <div class="actions">
+      <button class="btn success" onclick="confirmPrototypePurchase()">구매 처리 완료</button>
+      <button class="btn ghost" onclick="closeModal('purchaseModal')">취소</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="mailboxModal" class="modalBack" onclick="backdropClose(event,'mailboxModal')">
+  <div class="modal" style="width:min(900px,100%)">
+    <div class="modalTop">
+      <div><h2>메일함</h2><p>구매 영수증과 상품 지급 내역을 확인합니다.</p></div>
+      <button class="closeBtn" onclick="closeModal('mailboxModal')">×</button>
+    </div>
+    <div id="mailboxLoginRequired" class="notice" style="display:none">메일함은 로그인한 회원에게만 제공됩니다.</div>
+    <div id="mailboxContent" class="mailLayout">
+      <div id="mailList" class="mailList"></div>
+      <div id="mailViewer" class="mailViewer"></div>
+    </div>
+  </div>
+</div>
+
+<div id="profileModal" class="modalBack" onclick="backdropClose(event,'profileModal')">
+  <div class="modal">
+    <div class="modalTop">
+      <div>
+        <h2>프로필 수정</h2>
+        <p>구매 시 기본으로 입력될 정보를 수정합니다.</p>
+      </div>
+      <button class="closeBtn" onclick="closeModal('profileModal')">×</button>
+    </div>
+    <div class="stack">
+      <label>구매자 이름<input id="profileBuyerName"></label>
+      <label>Discord 이름 (Discord에서 자동)<input id="profileDiscordName" readonly></label>
+      <button class="btn" onclick="saveProfile()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const STORAGE_KEY = "nexfivehub_products_v5";
+const SETTINGS_KEY = "nexfivehub_settings_v5";
+const ORDERS_KEY = "nexfivehub_orders_v5";
+const ADMIN_SESSION = "nexfivehub_admin_session";
+const PROTOTYPE_PASSWORD = "1234";
+const USERS_KEY = "nexfivehub_users_v5";
+const USER_SESSION_KEY = "nexfivehub_user_session_v5";
+const MAIL_KEY = "nexfivehub_mail_v5";
+
+let editId = null;
+let pendingProductId = null;
+
+function defaultSettings(){
+  return {
+    discordEnabled: false,
+    discordWebhookUrl: ""
+  };
+}
+
+function getSettings(){
+  try{
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if(raw) return {...defaultSettings(), ...JSON.parse(raw)};
+  }catch(e){}
+  return defaultSettings();
+}
+
+function setSettings(settings){
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+function getProducts(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  const seed = [
+    {
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      name:"디지털 서비스 이용권",
+      price:9900,
+      description:"NexFive Hub 프로토타입 기본 상품입니다.",
+      type:"디지털",
+      stock:999,
+      unlimitedStock:false,
+      active:true,
+      image:"",
+      delivery:"결제 완료 후 즉시 제공",
+      grantType:"none", grantText:"", grantLink:"", grantFileName:"", grantFileData:"",
+      refund:"서비스 제공 전 취소 가능"
+    }
+  ];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+  return seed;
+}
+
+function setProducts(items){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  renderStore();
+  renderAdminTable();
+}
+
+function getOrders(){
+  try{
+    const raw = localStorage.getItem(ORDERS_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return [];
+}
+
+function setOrders(items){
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(items));
+  renderOrderLogs();
+}
+
+function money(v){
+  return Number(v||0).toLocaleString("ko-KR")+"원";
+}
+
+function renderStore(){
+  const grid = document.getElementById("productGrid");
+  const products = getProducts().filter(p=>p.active);
+  if(!products.length){
+    grid.innerHTML = '<div class="empty">현재 판매 중인 상품이 없습니다.</div>';
+    return;
+  }
+  grid.innerHTML = products.map(p=>`
+    <article class="card">
+      <div class="thumb">
+        ${p.image ? `<img src="${escapeHtml(p.image)}" alt="">` : escapeHtml(p.type || "PRODUCT")}
+      </div>
+      <div class="cardBody">
+        <h3>${escapeHtml(p.name)}</h3>
+        <div class="desc">${escapeHtml(p.description || "")}</div>
+        <div class="price">${money(p.price)}</div>
+        <div class="meta">${escapeHtml(p.type)} · 재고 ${p.unlimitedStock ? "무제한" : Number(p.stock||0)}</div>
+        <div class="actions">
+          <button class="btn" onclick="prototypeBuy('${p.id}')">구매하기</button>
+        </div>
+      </div>
+    </article>
+  `).join("");
+}
+
+function prototypeBuy(id){
+  const p = getProducts().find(x=>x.id===id);
+  if(!p) return;
+
+  pendingProductId = id;
+  document.getElementById("purchaseProductText").textContent = `${p.name} · ${money(p.price)}`;
+
+  const user = getCurrentUser();
+  const discordInput = document.getElementById("purchaseDiscordName");
+  document.getElementById("purchaseBuyerName").value = user?.buyerName || "";
+  discordInput.value = user?.discordName || "";
+  discordInput.readOnly = user?.provider === "discord";
+  document.getElementById("purchaseAccountInfo").innerHTML = user
+    ? `로그인 계정: <b>${escapeHtml(user.discordName || user.provider)}</b>${user.provider === "discord" ? " · Discord 인증됨 ✓" : ""}`
+    : `현재 비회원 구매입니다. <button class="btn secondary" style="padding:6px 9px;margin-left:8px" onclick="closeModal('purchaseModal');openAccountModal()">로그인/가입</button>`;
+
+  openModal("purchaseModal");
+}
+
+async function confirmPrototypePurchase(){
+  const p = getProducts().find(x=>x.id===pendingProductId);
+  if(!p) return;
+
+  const buyerName = document.getElementById("purchaseBuyerName").value.trim();
+  const discordName = document.getElementById("purchaseDiscordName").value.trim();
+
+  if(!buyerName){
+    alert("구매자 이름을 입력해 주세요.");
+    return;
+  }
+  if(!discordName){
+    alert("Discord 이름을 입력해 주세요.");
+    return;
+  }
+
+  const user = getCurrentUser();
+  const order = {
+    orderId: "PROTO-" + Date.now(),
+    productId: p.id,
+    productName: p.name,
+    amount: p.price,
+    buyerName,
+    discordName,
+    accountEmail: user?.email || "",
+    accountProvider: user?.provider || "guest",
+    createdAt: new Date().toISOString(),
+    webhookStatus: "DISABLED"
+  };
+
+  const orders = getOrders();
+  orders.unshift(order);
+  setOrders(orders);
+
+  if(user){
+    createPurchaseMail(user, order, p);
+    updateCurrentUserProfile({buyerName, discordName});
+  }
+
+  closeModal("purchaseModal");
+
+  const settings = getSettings();
+  if(settings.discordEnabled && settings.discordWebhookUrl){
+    try{
+      await sendDiscordWebhook(order, settings.discordWebhookUrl);
+      order.webhookStatus = "SENT";
+      setOrders(getOrders().map(o => o.orderId === order.orderId ? order : o));
+      alert(`구매 처리 완료
+
+구매자: ${buyerName}
+Discord: ${discordName}
+상품: ${p.name}
+금액: ${money(p.price)}
+
+Discord 알림도 전송했습니다.`);
+    }catch(err){
+      console.error(err);
+      order.webhookStatus = "FAILED";
+      setOrders(getOrders().map(o => o.orderId === order.orderId ? order : o));
+      alert(`구매 처리는 완료했지만 Discord Webhook 전송은 실패했습니다.
+
+${err.message || err}`);
+    }
+  }else{
+    alert(`구매 처리 완료
+
+구매자: ${buyerName}
+Discord: ${discordName}
+상품: ${p.name}
+금액: ${money(p.price)}
+
+Discord 알림은 꺼져 있습니다.`);
+  }
+}
+
+async function sendDiscordWebhook(order, url){
+  if(!/^https:\/\/(discord\.com|discordapp\.com)\/api\/webhooks\//i.test(url)){
+    throw new Error("Discord Webhook URL 형식이 아닙니다.");
+  }
+
+  const payload = {
+    username: "NexFive Hub",
+    embeds: [
+      {
+        title: "✅ 구매 처리 완료",
+        fields: [
+          { name: "구매자", value: String(order.buyerName || "테스트"), inline: true },
+          { name: "Discord", value: String(order.discordName || "테스트"), inline: true },
+          { name: "상품", value: String(order.productName), inline: true },
+          { name: "금액", value: money(order.amount), inline: true },
+          { name: "주문번호", value: String(order.orderId), inline: false },
+          { name: "계정", value: String(order.accountEmail || order.accountProvider || "비회원"), inline: false }
+        ],
+        timestamp: new Date().toISOString()
+      }
+    ]
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  if(!response.ok){
+    const text = await response.text().catch(()=> "");
+    throw new Error(`Webhook HTTP ${response.status}${text ? " - " + text.slice(0,120) : ""}`);
+  }
+}
+
+function showStore(){
+  document.getElementById("storeView").style.display="block";
+  document.getElementById("adminView").style.display="none";
+  renderStore();
+}
+
+function openAdmin(){
+  document.getElementById("storeView").style.display="none";
+  document.getElementById("adminView").style.display="block";
+  if(sessionStorage.getItem(ADMIN_SESSION)==="1"){
+    showAdminPanel();
+  }else{
+    document.getElementById("adminLogin").style.display="block";
+    document.getElementById("adminPanel").style.display="none";
+  }
+}
+
+function adminLogin(){
+  const pw = document.getElementById("adminPassword").value;
+  if(pw === PROTOTYPE_PASSWORD){
+    sessionStorage.setItem(ADMIN_SESSION,"1");
+    document.getElementById("loginError").textContent="";
+    showAdminPanel();
+  }else{
+    document.getElementById("loginError").textContent="비밀번호가 올바르지 않습니다.";
+  }
+}
+
+function showAdminPanel(){
+  document.getElementById("adminLogin").style.display="none";
+  document.getElementById("adminPanel").style.display="block";
+  renderAdminTable();
+  renderOrderLogs();
+  loadSettingsForm();
+}
+
+function logoutAdmin(){
+  sessionStorage.removeItem(ADMIN_SESSION);
+  document.getElementById("adminPassword").value="";
+  openAdmin();
+}
+
+function switchAdminTab(tab, btn){
+  ["products","add","orders","settings"].forEach(name=>{
+    document.getElementById("tab-"+name).style.display = tab===name ? "block" : "none";
+  });
+  document.querySelectorAll(".sidebtn").forEach(x=>x.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  if(tab==="settings") loadSettingsForm();
+  if(tab==="orders") renderOrderLogs();
+}
+
+function selectSidebarTab(name){
+  const btn = document.querySelector(`.sidebtn[data-tab="${name}"]`);
+  switchAdminTab(name, btn);
+}
+
+function openAddTab(){
+  resetForm();
+  selectSidebarTab("add");
+}
+
+function renderAdminTable(){
+  const wrap = document.getElementById("productTableWrap");
+  if(!wrap) return;
+  const products = getProducts();
+  if(!products.length){
+    wrap.innerHTML='<div class="empty">등록된 상품이 없습니다.</div>';
+    return;
+  }
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>상품명</th>
+          <th>가격</th>
+          <th>종류</th>
+          <th>재고</th>
+          <th>상태</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${products.map(p=>`
+          <tr>
+            <td><b>${escapeHtml(p.name)}</b><br><span class="meta">${escapeHtml(p.description||"")}</span></td>
+            <td>${money(p.price)}</td>
+            <td>${escapeHtml(p.type||"")}</td>
+            <td>${p.unlimitedStock ? "무제한" : Number(p.stock||0)}</td>
+            <td><span class="status ${p.active?'on':'off'}">${p.active?'판매중':'판매중지'}</span></td>
+            <td>
+              <div class="actions" style="margin-top:0">
+                <button class="btn secondary" onclick="editProduct('${p.id}')">수정</button>
+                <button class="btn danger" onclick="deleteProduct('${p.id}')">삭제</button>
+              </div>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderOrderLogs(){
+  const wrap = document.getElementById("orderLogWrap");
+  if(!wrap) return;
+  const orders = getOrders();
+  if(!orders.length){
+    wrap.innerHTML='<div class="empty">구매 기록이 없습니다.</div>';
+    return;
+  }
+  wrap.innerHTML = orders.map(o=>{
+    const cls = o.webhookStatus === "SENT" ? "on" : (o.webhookStatus === "FAILED" ? "warn" : "off");
+    const label = o.webhookStatus === "SENT" ? "Discord 전송됨" : (o.webhookStatus === "FAILED" ? "Discord 실패" : "Discord 미사용");
+    return `
+      <div class="logItem">
+        <strong>${escapeHtml(o.productName)} · ${money(o.amount)}</strong>
+        <small>구매자 ${escapeHtml(o.buyerName || "-")} · Discord ${escapeHtml(o.discordName || "-")}</small><br>
+        <small>${escapeHtml(o.orderId)} · ${new Date(o.createdAt).toLocaleString("ko-KR")}</small><br>
+        <span class="status ${cls}" style="margin-top:7px">${label}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+function clearOrderLogs(){
+  if(!confirm("구매 로그를 모두 삭제할까요?")) return;
+  setOrders([]);
+  toast("구매 로그를 초기화했습니다.");
+}
+
+async function saveProduct(){
+  const name = document.getElementById("name").value.trim();
+  const price = Number(document.getElementById("price").value);
+  const description = document.getElementById("description").value.trim();
+  const type = document.getElementById("type").value;
+  const unlimitedStock = document.getElementById("stockMode").value === "unlimited";
+  const stock = unlimitedStock ? null : Number(document.getElementById("stock").value);
+  const active = document.getElementById("active").value === "true";
+  const image = document.getElementById("image").value.trim();
+  const delivery = document.getElementById("delivery").value.trim();
+  const grantType = document.getElementById("grantType").value;
+  const grantText = document.getElementById("grantText").value.trim();
+  const grantLink = document.getElementById("grantLink").value.trim();
+  const grantFileInput = document.getElementById("grantFile");
+  const refund = document.getElementById("refund").value.trim();
+
+  if(!name){
+    alert("상품명을 입력해 주세요.");
+    return;
+  }
+  if(!Number.isFinite(price) || price < 0){
+    alert("가격을 올바르게 입력해 주세요.");
+    return;
+  }
+  if(!unlimitedStock && (!Number.isFinite(stock) || stock < 0)){
+    alert("재고 수량을 올바르게 입력해 주세요.");
+    return;
+  }
+
+  let grantFileName = "";
+  let grantFileData = "";
+  if(editId){
+    const existing = getProducts().find(p=>p.id===editId);
+    grantFileName = existing?.grantFileName || "";
+    grantFileData = existing?.grantFileData || "";
+  }
+  if(grantType === "file" && grantFileInput.files && grantFileInput.files[0]){
+    const file = grantFileInput.files[0];
+    if(file.size > 2*1024*1024){ alert("프로토타입에서는 2MB 이하 파일만 지급 파일로 사용할 수 있습니다."); return; }
+    grantFileName = file.name;
+    grantFileData = await fileToDataUrl(file);
+  }
+
+  const products = getProducts();
+
+  if(editId){
+    const idx = products.findIndex(p=>p.id===editId);
+    if(idx !== -1){
+      products[idx] = {...products[idx], name, price, description, type, stock, unlimitedStock, active, image, delivery, grantType, grantText, grantLink, grantFileName, grantFileData, refund};
+    }
+    toast("상품을 수정했습니다.");
+  }else{
+    products.unshift({
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      name, price, description, type, stock, unlimitedStock, active, image, delivery, grantType, grantText, grantLink, grantFileName, grantFileData, refund
+    });
+    toast("상품을 추가했습니다.");
+  }
+
+  setProducts(products);
+  resetForm();
+  selectSidebarTab("products");
+}
+
+function editProduct(id){
+  const p = getProducts().find(x=>x.id===id);
+  if(!p) return;
+  editId = id;
+  document.getElementById("formTitle").textContent="상품 수정";
+  document.getElementById("name").value=p.name||"";
+  document.getElementById("price").value=p.price||0;
+  document.getElementById("description").value=p.description||"";
+  document.getElementById("type").value=p.type||"디지털";
+  document.getElementById("stockMode").value = p.unlimitedStock ? "unlimited" : "limited";
+  document.getElementById("stock").value = p.unlimitedStock ? 999 : (p.stock ?? 0);
+  toggleStockInput();
+  document.getElementById("active").value=String(!!p.active);
+  document.getElementById("image").value=p.image||"";
+  document.getElementById("delivery").value=p.delivery||"";
+  document.getElementById("grantType").value=p.grantType||"none";
+  document.getElementById("grantText").value=p.grantText||"";
+  document.getElementById("grantLink").value=p.grantLink||"";
+  document.getElementById("grantFile").value="";
+  document.getElementById("currentGrantFile").textContent=p.grantFileName ? `현재 파일: ${p.grantFileName}` : "";
+  toggleGrantFields();
+  document.getElementById("refund").value=p.refund||"";
+  selectSidebarTab("add");
+}
+
+function deleteProduct(id){
+  const p = getProducts().find(x=>x.id===id);
+  if(!p) return;
+  if(!confirm(`"${p.name}" 상품을 삭제할까요?`)) return;
+  const products = getProducts().filter(x=>x.id!==id);
+  setProducts(products);
+  toast("상품을 삭제했습니다.");
+}
+
+function resetForm(){
+  editId=null;
+  document.getElementById("formTitle").textContent="상품 추가";
+  ["name","price","description","image","delivery","grantText","grantLink","refund"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("grantType").value="none";
+  document.getElementById("grantFile").value="";
+  document.getElementById("currentGrantFile").textContent="";
+  toggleGrantFields();
+  document.getElementById("type").value="디지털";
+  document.getElementById("stockMode").value="limited";
+  document.getElementById("stock").value="999";
+  toggleStockInput();
+  document.getElementById("active").value="true";
+}
+
+function toggleStockInput(){
+  const mode = document.getElementById("stockMode")?.value || "limited";
+  const label = document.getElementById("stockCountLabel");
+  if(!label) return;
+  label.style.display = mode === "unlimited" ? "none" : "grid";
+}
+
+
+function fileToDataUrl(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(String(reader.result||""));
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function toggleGrantFields(){
+  const type=document.getElementById("grantType")?.value||"none";
+  document.getElementById("grantTextLabel")?.classList.toggle("hidden",type!=="text");
+  document.getElementById("grantLinkLabel")?.classList.toggle("hidden",type!=="link");
+  document.getElementById("grantFileLabel")?.classList.toggle("hidden",type!=="file");
+}
+
+function getAllMail(){ try{return JSON.parse(localStorage.getItem(MAIL_KEY)||"{}");}catch(e){return {};} }
+function setAllMail(data){ localStorage.setItem(MAIL_KEY,JSON.stringify(data)); renderMailBadge(); }
+function getUserMail(userId){ const all=getAllMail(); return Array.isArray(all[userId])?all[userId]:[]; }
+function setUserMail(userId,items){ const all=getAllMail(); all[userId]=items; setAllMail(all); }
+
+function createPurchaseMail(user,order,product){
+  const mail={
+    id:crypto.randomUUID?crypto.randomUUID():"MAIL-"+Date.now(), type:"receipt",
+    title:`구매 완료 · ${product.name}`, createdAt:new Date().toISOString(), read:false,
+    orderId:order.orderId, productName:product.name, amount:product.price,
+    buyerName:order.buyerName, discordName:order.discordName,
+    delivery:product.delivery||"", refund:product.refund||"",
+    grantType:product.grantType||"none", grantText:product.grantText||"", grantLink:product.grantLink||"",
+    grantFileName:product.grantFileName||"", grantFileData:product.grantFileData||""
+  };
+  const items=getUserMail(user.id); items.unshift(mail); setUserMail(user.id,items);
+}
+
+function openMailbox(){
+  const user=getCurrentUser(); const req=document.getElementById("mailboxLoginRequired"); const content=document.getElementById("mailboxContent");
+  if(!user){req.style.display="block";content.style.display="none";openModal("mailboxModal");return;}
+  req.style.display="none";content.style.display="grid";renderMailbox();openModal("mailboxModal");
+}
+
+function renderMailbox(selectedId=null){
+  const user=getCurrentUser(); if(!user)return;
+  const items=getUserMail(user.id), list=document.getElementById("mailList"), viewer=document.getElementById("mailViewer");
+  if(!items.length){list.innerHTML='<div class="mailEmpty">받은 메시지가 없습니다.</div>';viewer.innerHTML='<div class="mailEmpty">구매 영수증과 지급 내역이 여기에 표시됩니다.</div>';renderMailBadge();return;}
+  const selected=items.find(m=>m.id===selectedId)||items[0];
+  list.innerHTML=items.map(m=>`<button class="mailItem ${m.read?'':'unread'} ${m.id===selected.id?'active':''}" onclick="openMail('${m.id}')"><strong>${escapeHtml(m.title)}</strong><small>${new Date(m.createdAt).toLocaleString('ko-KR')}</small></button>`).join('');
+  renderMailViewer(selected);
+}
+
+function openMail(id){
+  const user=getCurrentUser(); if(!user)return; const items=getUserMail(user.id); const idx=items.findIndex(m=>m.id===id); if(idx<0)return;
+  items[idx].read=true;setUserMail(user.id,items);renderMailbox(id);
+}
+
+function renderMailViewer(mail){
+  const viewer=document.getElementById("mailViewer"); let deliveryHtml="";
+  if(mail.grantType==='text'&&mail.grantText){deliveryHtml=`<div class="deliveryBox"><strong>지급 내용</strong><p><code>${escapeHtml(mail.grantText)}</code></p></div>`;}
+  else if(mail.grantType==='link'&&mail.grantLink){deliveryHtml=`<div class="deliveryBox"><strong>지급 링크</strong><div class="actions"><a class="btn" href="${escapeHtml(mail.grantLink)}" target="_blank" rel="noopener noreferrer">링크 열기</a></div></div>`;}
+  else if(mail.grantType==='file'&&mail.grantFileData){deliveryHtml=`<div class="deliveryBox"><strong>지급 파일</strong><p>${escapeHtml(mail.grantFileName||'파일')}</p><div class="actions"><button class="btn" onclick="downloadGrantedFile('${mail.id}')">파일 받기</button></div></div>`;}
+  viewer.innerHTML=`<h3>${escapeHtml(mail.title)}</h3><div class="mailMeta">${new Date(mail.createdAt).toLocaleString('ko-KR')}</div><p><b>${escapeHtml(mail.buyerName)}</b>님의 구매가 처리되었습니다.</p><div class="receiptBox"><strong>영수증</strong><div class="receiptRow"><span>주문번호</span><b>${escapeHtml(mail.orderId)}</b></div><div class="receiptRow"><span>상품</span><b>${escapeHtml(mail.productName)}</b></div><div class="receiptRow"><span>결제금액</span><b>${money(mail.amount)}</b></div><div class="receiptRow"><span>Discord</span><b>${escapeHtml(mail.discordName||'-')}</b></div></div>${mail.delivery?`<p><b>제공 안내</b><br>${escapeHtml(mail.delivery)}</p>`:''}${deliveryHtml}${mail.refund?`<p><b>환불 안내</b><br>${escapeHtml(mail.refund)}</p>`:''}`;
+}
+
+function downloadGrantedFile(mailId){
+  const user=getCurrentUser(); if(!user)return; const mail=getUserMail(user.id).find(m=>m.id===mailId); if(!mail||!mail.grantFileData)return;
+  const a=document.createElement('a');a.href=mail.grantFileData;a.download=mail.grantFileName||'download';document.body.appendChild(a);a.click();a.remove();
+}
+
+function renderMailBadge(){
+  const badge=document.getElementById('mailBadge');if(!badge)return;const user=getCurrentUser();if(!user){badge.style.display='none';return;}
+  const unread=getUserMail(user.id).filter(m=>!m.read).length;badge.textContent=unread>99?'99+':String(unread);badge.style.display=unread>0?'flex':'none';
+}
+
+function loadSettingsForm(){
+  const settings = getSettings();
+  document.getElementById("discordEnabled").checked = !!settings.discordEnabled;
+  document.getElementById("discordWebhookUrl").value = settings.discordWebhookUrl || "";
+  document.getElementById("settingsResult").innerHTML = "";
+}
+
+function saveSettings(){
+  const settings = {
+    discordEnabled: document.getElementById("discordEnabled").checked,
+    discordWebhookUrl: document.getElementById("discordWebhookUrl").value.trim()
+  };
+
+  if(settings.discordEnabled && settings.discordWebhookUrl && !/^https:\/\/(discord\.com|discordapp\.com)\/api\/webhooks\//i.test(settings.discordWebhookUrl)){
+    document.getElementById("settingsResult").innerHTML = '<div class="errorBox">Discord Webhook URL 형식을 확인해 주세요.</div>';
+    return;
+  }
+
+  setSettings(settings);
+  document.getElementById("settingsResult").innerHTML = '<div class="successBox">설정을 저장했습니다.</div>';
+  toast("설정을 저장했습니다.");
+}
+
+async function testWebhook(){
+  const url = document.getElementById("discordWebhookUrl").value.trim();
+  const result = document.getElementById("settingsResult");
+
+  if(!url){
+    result.innerHTML = '<div class="errorBox">Webhook URL을 먼저 입력해 주세요.</div>';
+    return;
+  }
+
+  result.innerHTML = '<div class="info">테스트 메시지를 전송 중입니다...</div>';
+
+  const order = {
+    orderId: "TEST-" + Date.now(),
+    productName: "NexFive Hub Webhook 테스트",
+    amount: 0,
+    buyerName: "테스트 구매자",
+    discordName: "test_user",
+    accountProvider: "prototype"
+  };
+
+  try{
+    await sendDiscordWebhook(order, url);
+    result.innerHTML = '<div class="successBox">Discord 테스트 전송에 성공했습니다.</div>';
+  }catch(err){
+    console.error(err);
+    result.innerHTML = `<div class="errorBox">전송 실패: ${escapeHtml(err.message || String(err))}<br><br>브라우저에서 Discord Webhook 직접 호출이 CORS로 차단되는 환경도 있습니다. 실서비스에서는 서버에서 전송합니다.</div>`;
+  }
+}
+
+function toggleWebhookVisibility(){
+  const input = document.getElementById("discordWebhookUrl");
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+
+function getUsers(){
+  try{
+    return JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+  }catch(e){
+    return [];
+  }
+}
+
+function setUsers(users){
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+function getCurrentUser(){
+  const id = localStorage.getItem(USER_SESSION_KEY);
+  if(!id) return null;
+  return getUsers().find(u => u.id === id) || null;
+}
+
+function setCurrentUser(user){
+  if(user) localStorage.setItem(USER_SESSION_KEY, user.id);
+  else localStorage.removeItem(USER_SESSION_KEY);
+  renderAccountButton();
+  renderMailBadge();
+}
+
+function updateCurrentUserProfile(data){
+  const current = getCurrentUser();
+  if(!current) return;
+  const users = getUsers();
+  const idx = users.findIndex(u => u.id === current.id);
+  if(idx === -1) return;
+  users[idx] = {...users[idx], ...data};
+  setUsers(users);
+  renderAccountButton();
+  renderMailBadge();
+}
+
+async function hashPassword(value){
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+function openModal(id){
+  document.getElementById(id).style.display = "flex";
+}
+
+function closeModal(id){
+  document.getElementById(id).style.display = "none";
+}
+
+function backdropClose(event,id){
+  if(event.target.id === id) closeModal(id);
+}
+
+function openAccountModal(){
+  const user = getCurrentUser();
+  document.getElementById("loggedInPane").style.display = user ? "block" : "none";
+  document.getElementById("loggedOutPane").style.display = user ? "none" : "block";
+  if(user){
+    const avatar = user.avatarUrl
+      ? `<img class="accountAvatarImg" src="${escapeHtml(user.avatarUrl)}" alt="">`
+      : "";
+    document.getElementById("currentUserBox").innerHTML =
+      `${avatar}<br>`+
+      `<b>${escapeHtml(user.buyerName || user.discordName || user.provider)}</b><br>`+
+      `로그인 방식: ${escapeHtml(user.provider)}<br>`+
+      `Discord: ${escapeHtml(user.discordName || "미설정")}<br>`+
+      `${user.discordId ? "Discord ID: "+escapeHtml(user.discordId) : ""}`;
+  }
+  openModal("accountModal");
+}
+
+function switchAuthTab(tab){
+  document.getElementById("loginTabBtn").classList.toggle("active", tab==="login");
+  document.getElementById("signupTabBtn").classList.toggle("active", tab==="signup");
+  document.getElementById("auth-login").classList.toggle("active", tab==="login");
+  document.getElementById("auth-signup").classList.toggle("active", tab==="signup");
+  document.getElementById("authResult").innerHTML = "";
+}
+
+async function emailSignup(){
+  const email = document.getElementById("signupEmail").value.trim().toLowerCase();
+  const password = document.getElementById("signupPassword").value;
+  const buyerName = document.getElementById("signupBuyerName").value.trim();
+  const discordName = document.getElementById("signupDiscordName").value.trim();
+  const result = document.getElementById("authResult");
+
+  if(!email || !email.includes("@") || password.length < 4 || !buyerName || !discordName){
+    result.innerHTML = '<div class="errorBox">이메일, 4자 이상 비밀번호, 구매자 이름, Discord 이름을 모두 입력해 주세요.</div>';
+    return;
+  }
+
+  const users = getUsers();
+  if(users.some(u => u.email === email)){
+    result.innerHTML = '<div class="errorBox">이미 가입된 이메일입니다.</div>';
+    return;
+  }
+
+  const passwordHash = await hashPassword(password);
+  const user = {
+    id: crypto.randomUUID ? crypto.randomUUID() : "USER-"+Date.now(),
+    provider:"email",
+    email,
+    passwordHash,
+    buyerName,
+    discordName,
+    createdAt:new Date().toISOString()
+  };
+  users.push(user);
+  setUsers(users);
+  setCurrentUser(user);
+  closeModal("accountModal");
+  toast("가입 및 로그인 완료");
+}
+
+async function emailLogin(){
+  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+  const result = document.getElementById("authResult");
+  const hash = await hashPassword(password);
+  const user = getUsers().find(u => u.email === email && u.passwordHash === hash && u.provider === "email");
+  if(!user){
+    result.innerHTML = '<div class="errorBox">이메일 또는 비밀번호가 올바르지 않습니다.</div>';
+    return;
+  }
+  setCurrentUser(user);
+  closeModal("accountModal");
+  toast("로그인 완료");
+}
+
+function startDiscordLogin(){
+  window.location.href = "/auth/discord";
+}
+
+async function syncDiscordSession(){
+  try{
+    const response = await fetch("/api/me", {
+      method: "GET",
+      credentials: "same-origin",
+      cache: "no-store"
+    });
+
+    const data = await response.json();
+
+    if(!response.ok || !data.authenticated || !data.user){
+      const current = getCurrentUser();
+      if(current?.provider === "discord"){
+        setCurrentUser(null);
+      }
+      return false;
+    }
+
+    const discord = data.user;
+    const localId = `discord:${discord.id}`;
+    const users = getUsers();
+    let user = users.find(u => u.id === localId);
+
+    const updated = {
+      ...(user || {}),
+      id: localId,
+      provider: "discord",
+      discordId: discord.id,
+      discordUsername: discord.username,
+      discordName: discord.globalName || discord.username,
+      buyerName: user?.buyerName || discord.globalName || discord.username,
+      avatarUrl: discord.avatarUrl || "",
+      createdAt: user?.createdAt || new Date().toISOString(),
+      lastLoginAt: new Date().toISOString()
+    };
+
+    const index = users.findIndex(u => u.id === localId);
+    if(index === -1) users.push(updated);
+    else users[index] = updated;
+
+    setUsers(users);
+    setCurrentUser(updated);
+    return true;
+  }catch(error){
+    console.error("Discord session sync failed:", error);
+    return false;
+  }
+}
+
+async function logoutUser(){
+  try{
+    await fetch("/auth/logout", {
+      method: "POST",
+      credentials: "same-origin"
+    });
+  }catch(error){
+    console.error(error);
+  }
+  setCurrentUser(null);
+  closeModal("accountModal");
+  toast("로그아웃 완료");
+}
+
+function openProfileEdit(){
+  const user = getCurrentUser();
+  if(!user) return;
+  document.getElementById("profileBuyerName").value = user.buyerName || "";
+  document.getElementById("profileDiscordName").value = user.discordName || "";
+  closeModal("accountModal");
+  openModal("profileModal");
+}
+
+function saveProfile(){
+  const current = getCurrentUser();
+  const buyerName = document.getElementById("profileBuyerName").value.trim();
+  const discordName = current?.provider === "discord"
+    ? current.discordName
+    : document.getElementById("profileDiscordName").value.trim();
+
+  if(!buyerName || !discordName){
+    alert("구매자 이름과 Discord 이름을 확인해 주세요.");
+    return;
+  }
+  updateCurrentUserProfile({buyerName, discordName});
+  closeModal("profileModal");
+  toast("프로필 저장 완료");
+}
+
+function renderAccountButton(){
+  const user = getCurrentUser();
+  const btn = document.getElementById("accountButton");
+  if(!btn) return;
+  if(user){
+    const label = user.buyerName || user.discordName || user.provider;
+    const icon = user.avatarUrl
+      ? `<img class="accountAvatarImg" src="${escapeHtml(user.avatarUrl)}" alt="">`
+      : `<span class="avatar">${escapeHtml((label || "U").trim().charAt(0).toUpperCase())}</span>`;
+    btn.innerHTML = `${icon}<span>${escapeHtml(label)}</span>`;
+  }else{
+    btn.innerHTML = '<span class="avatar">?</span><span>로그인</span>';
+  }
+}
+
+
+function toast(msg){
+  const el=document.getElementById("toast");
+  el.textContent=msg;
+  el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"),1600);
+}
+
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+renderStore();
+toggleStockInput();
+renderAccountButton();
+renderMailBadge();
+toggleGrantFields();
+
+(async()=>{
+  const loggedIn = await syncDiscordSession();
+  renderAccountButton();
+  renderMailBadge();
+
+  const params = new URLSearchParams(location.search);
+  if(params.get("auth") === "discord" && loggedIn){
+    toast("Discord 로그인 완료");
+    history.replaceState({}, "", location.pathname + location.hash);
+  }else if(params.get("auth_error")){
+    toast("Discord 로그인 실패: " + params.get("auth_error"));
+    history.replaceState({}, "", location.pathname + location.hash);
+  }
+})();
+
+if(location.hash === "#admin") openAdmin();
+</script>
+</body>
+</html>
