@@ -4,7 +4,7 @@
 
 ## 실제로 동작하는 부분
 
-- Discord `identify` OAuth2 로그인
+- Discord `identify + email` OAuth2 로그인
 - 첫 로그인 = NexFive 계정 자동 생성(Discord ID를 내부 계정 식별자로 사용)
 - Discord ID / username / global display name / avatar 가져오기
 - OAuth `state` 검증
@@ -237,7 +237,7 @@ SameSite=Lax
 현재는:
 
 ```text
-identify
+identify email
 ```
 
 만 사용합니다.
@@ -248,6 +248,7 @@ identify
 - username
 - global display name
 - avatar
+- email
 
 서버 목록, DM, 친구 목록 등의 권한은 요청하지 않습니다.
 
