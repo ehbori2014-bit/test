@@ -166,6 +166,202 @@
     .mailEmpty{padding:42px;text-align:center;color:var(--muted)}.fileNote{font-size:12px;color:var(--muted);margin-top:6px}.hidden{display:none!important}
     @media(max-width:820px){.mailLayout{grid-template-columns:1fr}.mailList{max-height:240px;overflow:auto}}
 
+
+    /* ===== NexFive × Discord login theme ===== */
+    .discordAccountBackdrop{
+      background:
+        radial-gradient(circle at 18% 18%, rgba(220,105,190,.24), transparent 31%),
+        radial-gradient(circle at 82% 76%, rgba(88,101,242,.34), transparent 36%),
+        linear-gradient(135deg, rgba(18,19,32,.90), rgba(36,38,68,.92));
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+    }
+    .discordAccountModal{
+      position:relative;
+      overflow:hidden;
+      color:#f5f6ff;
+      background:
+        linear-gradient(145deg, rgba(63,66,112,.96) 0%, rgba(44,46,78,.98) 42%, rgba(29,30,48,.99) 100%);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 34px 90px rgba(0,0,0,.46),
+        0 0 0 1px rgba(88,101,242,.10) inset,
+        0 0 58px rgba(88,101,242,.16);
+    }
+    .discordAccountModal:before{
+      content:"";
+      position:absolute;
+      width:260px;height:260px;
+      right:-95px;top:-115px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(219,105,184,.38), rgba(114,92,244,.16) 46%, transparent 70%);
+      filter:blur(3px);
+      pointer-events:none;
+    }
+    .discordAccountModal:after{
+      content:"";
+      position:absolute;
+      left:-90px;bottom:-135px;
+      width:280px;height:280px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(88,101,242,.36), transparent 68%);
+      pointer-events:none;
+    }
+    .discordAccountModal > *{position:relative;z-index:1}
+    .discordAccountModal .modalTop{margin-bottom:20px}
+    .discordAccountModal .modalTop h2{
+      color:#fff;
+      font-size:24px;
+      letter-spacing:-.4px;
+    }
+    .discordAccountModal .modalTop p{
+      color:rgba(235,237,255,.70);
+      margin:4px 0 0;
+    }
+    .discordAccountModal .closeBtn{
+      color:#eef0ff;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.11);
+      transition:.18s ease;
+    }
+    .discordAccountModal .closeBtn:hover{
+      transform:rotate(6deg);
+      background:rgba(255,255,255,.15);
+    }
+    .discordLoginPane{
+      padding:18px;
+      border-radius:18px;
+      background:linear-gradient(160deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:0 18px 45px rgba(0,0,0,.16) inset;
+    }
+    .discordLoginHero{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:16px;
+    }
+    .discordLoginMark{
+      flex:0 0 58px;
+      width:58px;height:58px;
+      display:grid;place-items:center;
+      border-radius:17px;
+      color:white;
+      font-size:19px;
+      font-weight:900;
+      letter-spacing:-1px;
+      background:linear-gradient(135deg,#5865F2 5%,#7668f3 52%,#d56fb8 115%);
+      box-shadow:0 12px 30px rgba(88,101,242,.34),0 0 24px rgba(212,108,186,.16);
+    }
+    .discordEyebrow{
+      color:#c9ccff;
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:1.25px;
+      margin-bottom:4px;
+    }
+    .discordLoginHero h3{
+      margin:0;
+      font-size:18px;
+      color:#fff;
+    }
+    .discordLoginHero p{
+      margin:4px 0 0;
+      color:rgba(235,237,255,.68);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .discordLoginInfo{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:10px 12px;
+      margin-bottom:14px;
+      border-radius:12px;
+      color:#e9eaff;
+      background:rgba(88,101,242,.12);
+      border:1px solid rgba(139,148,255,.18);
+      font-size:12px;
+    }
+    .statusDot{
+      width:8px;height:8px;border-radius:50%;
+      background:#7ef0b8;
+      box-shadow:0 0 0 4px rgba(126,240,184,.10),0 0 12px rgba(126,240,184,.45);
+    }
+    .discordLoginActions{gap:10px}
+    .discordAccountModal .discordLoginBtn{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:52px;
+      border:1px solid rgba(255,255,255,.16);
+      color:#fff;
+      font-size:14px;
+      letter-spacing:-.1px;
+      background:linear-gradient(105deg,#5865F2 0%,#6d66f3 50%,#a86fdc 82%,#cf72b3 118%);
+      box-shadow:0 13px 32px rgba(88,101,242,.32),0 0 25px rgba(203,111,185,.12);
+      transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+    }
+    .discordAccountModal .discordLoginBtn:hover{
+      background:linear-gradient(105deg,#6571f5 0%,#786ff6 50%,#b979e5 83%,#de7fc0 120%);
+      transform:translateY(-2px);
+      box-shadow:0 17px 38px rgba(88,101,242,.40),0 0 30px rgba(213,112,190,.18);
+      filter:saturate(1.06);
+    }
+    .discordAccountModal .discordLoginBtn:active{transform:translateY(0)}
+    .discordButtonIcon{
+      width:27px;height:27px;
+      display:grid;place-items:center;
+      border-radius:9px;
+      background:rgba(255,255,255,.15);
+      border:1px solid rgba(255,255,255,.13);
+      font-size:12px;
+      font-weight:900;
+    }
+    .loginArrow{
+      position:absolute;
+      right:16px;
+      opacity:.80;
+      font-size:18px;
+      transition:transform .18s ease;
+    }
+    .discordLoginBtn:hover .loginArrow{transform:translateX(3px)}
+    .discordAccountModal .googleSoonBtn{
+      opacity:.48;
+      cursor:not-allowed;
+      color:#d7d8e8;
+      background:rgba(19,20,32,.36);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .discordAccountModal .googleSoonBtn:hover{background:rgba(19,20,32,.36)}
+    .discordScopeNote{
+      margin-top:14px;
+      color:rgba(230,232,249,.56);
+      text-align:center;
+      font-size:11px;
+    }
+    .discordScopeNote b{color:#d9d9ff}
+    .discordAccountModal .userBadge{
+      color:#f7f7ff;
+      background:rgba(255,255,255,.07);
+      border-color:rgba(255,255,255,.12);
+    }
+    .discordAccountModal .actions{margin-top:14px}
+    .discordAccountModal .btn.ghost{
+      color:#f0f1ff;
+      border-color:rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+    }
+    @media(max-width:560px){
+      .discordAccountModal{padding:19px;border-radius:18px}
+      .discordLoginPane{padding:14px}
+      .discordLoginHero{align-items:flex-start}
+      .discordLoginMark{width:50px;height:50px;flex-basis:50px;border-radius:15px}
+      .discordAccountModal .modalTop h2{font-size:21px}
+    }
+
   </style>
 </head>
 <body>
@@ -424,12 +620,12 @@
 </section>
 
 
-<div id="accountModal" class="modalBack" onclick="backdropClose(event,'accountModal')">
-  <div class="modal">
+<div id="accountModal" class="modalBack discordAccountBackdrop" onclick="backdropClose(event,'accountModal')">
+  <div class="modal discordAccountModal">
     <div class="modalTop">
       <div>
-        <h2>계정</h2>
-        <p>회원가입 후 구매자 정보를 저장할 수 있습니다.</p>
+        <h2>NexFive 계정</h2>
+        <p>Discord 하나로 로그인하고 NexFive Hub를 이용하세요.</p>
       </div>
       <button class="closeBtn" onclick="closeModal('accountModal')">×</button>
     </div>
@@ -442,21 +638,34 @@
       </div>
     </div>
 
-    <div id="loggedOutPane">
-      <div class="info">
-        Discord 계정으로 처음 로그인하면 NexFive Hub 계정이 자동으로 생성됩니다.
-        별도의 비밀번호는 저장하지 않습니다.
+    <div id="loggedOutPane" class="discordLoginPane">
+      <div class="discordLoginHero">
+        <div class="discordLoginMark">N5</div>
+        <div>
+          <div class="discordEyebrow">NEXFIVE HUB × DISCORD</div>
+          <h3>Discord 계정으로 시작하기</h3>
+          <p>한 번 연결하면 다음 방문부터 로그인 상태가 자동으로 유지됩니다.</p>
+        </div>
       </div>
-      <div class="stack">
+
+      <div class="discordLoginInfo">
+        <span class="statusDot"></span>
+        <span>Discord 기본 프로필만 사용 · 별도 비밀번호 저장 없음</span>
+      </div>
+
+      <div class="stack discordLoginActions">
         <button class="socialBtn discordLoginBtn" onclick="startDiscordLogin()">
-          Discord로 가입 / 로그인
+          <span class="discordButtonIcon">D</span>
+          <span>Discord로 가입 / 로그인</span>
+          <span class="loginArrow">→</span>
         </button>
-        <button class="socialBtn" disabled style="opacity:.55;cursor:not-allowed">
+        <button class="socialBtn googleSoonBtn" disabled>
           Google 로그인 · 준비 중
         </button>
       </div>
-      <div class="fileNote" style="margin-top:14px">
-        Discord 권한은 기본 프로필 확인용 <b>identify</b>만 요청합니다.
+
+      <div class="discordScopeNote">
+        요청 권한 <b>identify</b> · 사용자 ID, 이름, 프로필 사진
       </div>
       <div id="authResult"></div>
     </div>
