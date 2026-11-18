@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주식봇 이용약관</title>
+<meta name="description" content="게임 서버 주식 봇의 서비스 범위, 금지 행위, 이용 제한 및 해지, 책임 한계, 약관 변경과 문의처를 설명합니다.">
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#1b1f27; --muted:#5b6472; --line:#e2e5ea;
+  --brand:#2b6cf0; --brand-soft:#e8f0fe; --warn:#9a5b00; --warn-soft:#fff4d6;
+  --ok:#0b7a4b; --ok-soft:#e3f6ec; --bad:#b3261e; --bad-soft:#fdeceb;
+  --up:#d93025; --down:#1a73e8; --radius:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1218; --panel:#171b23; --ink:#e8ebf0; --muted:#9aa4b2; --line:#2a303b;
+    --brand:#7aa7ff; --brand-soft:#1c2740; --warn:#f2c36b; --warn-soft:#2e2614;
+    --ok:#62d6a0; --ok-soft:#12291f; --bad:#ff8a80; --bad-soft:#341716;
+    --up:#ff8a80; --down:#8ab4f8;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1218; --panel:#171b23; --ink:#e8ebf0; --muted:#9aa4b2; --line:#2a303b;
+  --brand:#7aa7ff; --brand-soft:#1c2740; --warn:#f2c36b; --warn-soft:#2e2614;
+  --ok:#62d6a0; --ok-soft:#12291f; --bad:#ff8a80; --bad-soft:#341716;
+  --up:#ff8a80; --down:#8ab4f8;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  line-height:1.75;font-size:16px;-webkit-text-size-adjust:100%;
+}
+a{color:var(--brand)}
+.top{
+  position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+}
+.top-in{max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.logo{font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.logo i{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--brand);color:#fff;font-style:normal;font-size:15px}
+.spacer{flex:1}
+.btn{
+  appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+  border-radius:10px;padding:7px 12px;font:inherit;font-size:14px;cursor:pointer;
+}
+.btn:hover{border-color:var(--brand)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 80px;display:grid;grid-template-columns:240px 1fr;gap:36px}
+nav.toc{position:sticky;top:84px;align-self:start;max-height:calc(100vh - 110px);overflow:auto;padding-right:6px}
+nav.toc h2{font-size:12px;letter-spacing:.08em;color:var(--muted);margin:0 0 8px;text-transform:uppercase}
